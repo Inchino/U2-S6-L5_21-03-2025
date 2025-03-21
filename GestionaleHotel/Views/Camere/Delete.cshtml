@@ -1,0 +1,10 @@
+﻿@model GestionaleHotel.ViewModels.CameraDetailViewModel
+
+<h2>Elimina Camera</h2>
+<p>Sei sicuro di voler eliminare la camera <strong>@Model.Numero</strong>?</p>
+
+<form asp-action="DeleteConfirmed">
+    <input type="hidden" asp-for="CameraId" />
+    <button type="submit" class="btn btn-danger">Elimina</button>
+    <a asp-action="Index" class="btn btn-secondary">Annulla</a>
+</form>

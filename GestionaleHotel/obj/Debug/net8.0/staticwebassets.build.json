@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "4hv9yqEElR7CqCIWacinMZheN2ILCHG5uJPCNbeDdZc=",
+  "Hash": "bUyzz3j9NZF2KBoCRX+q2fjylwg9SdA0Q2bWxXrmYcc=",
   "Source": "GestionaleHotel",
   "BasePath": "_content/GestionaleHotel",
   "Mode": "Default",
@@ -1343,7 +1343,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 21 Mar 2025 09:46:21 GMT"
+          "Value": "Fri, 21 Mar 2025 12:16:19 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1388,7 +1388,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 21 Mar 2025 09:46:21 GMT"
+          "Value": "Fri, 21 Mar 2025 12:16:19 GMT"
         },
         {
           "Name": "Cache-Control",

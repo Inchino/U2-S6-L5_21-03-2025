@@ -1,0 +1,10 @@
+﻿@model GestionaleHotel.ViewModels.ClienteDetailViewModel
+
+<h2>Elimina Cliente</h2>
+<p>Sei sicuro di voler eliminare @Model.Nome @Model.Cognome?</p>
+
+<form asp-action="DeleteConfirmed">
+    <input type="hidden" asp-for="ClienteId" />
+    <button type="submit" class="btn btn-danger">Elimina</button>
+    <a asp-action="Index" class="btn btn-secondary">Annulla</a>
+</form>

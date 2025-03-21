@@ -1,0 +1,31 @@
+﻿@model IEnumerable<GestionaleHotel.ViewModels.CameraListViewModel>
+
+<h2>Gestione Camere</h2>
+<a asp-action="Create" class="btn btn-primary">Aggiungi Camera</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Numero</th>
+            <th>Tipo</th>
+            <th>Prezzo (€)</th>
+            <th>Disponibile</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var camera in Model)
+        {
+            <tr>
+                <td>@camera.Numero</td>
+                <td>@camera.Tipo</td>
+                <td>@camera.Prezzo.ToString("0.00")</td>
+                <td>@(camera.Disponibile ? "Sì" : "No")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@camera.CameraId" class="btn btn-warning">Modifica</a>
+                    <a asp-action="Delete" asp-route-id="@camera.CameraId" class="btn btn-danger">Elimina</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<GestionaleHotel.ViewModels.PrenotazioneListViewModel>
+
+<h2>Gestione Prenotazioni</h2>
+<a asp-action="Create" class="btn btn-primary">Aggiungi Prenotazione</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Camera</th>
+            <th>Data Inizio</th>
+            <th>Data Fine</th>
+            <th>Stato</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var prenotazione in Model)
+        {
+            <tr>
+                <td>@prenotazione.ClienteNomeCompleto</td>
+                <td>@prenotazione.CameraNumero</td>
+                <td>@prenotazione.DataInizio.ToShortDateString()</td>
+                <td>@prenotazione.DataFine.ToShortDateString()</td>
+                <td>@prenotazione.Stato</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@prenotazione.PrenotazioneId" class="btn btn-warning">Modifica</a>
+                    <a asp-action="Delete" asp-route-id="@prenotazione.PrenotazioneId" class="btn btn-danger">Elimina</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

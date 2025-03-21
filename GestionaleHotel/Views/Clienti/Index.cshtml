@@ -1,0 +1,29 @@
+﻿@model IEnumerable<GestionaleHotel.ViewModels.ClienteListViewModel>
+
+<h2>Clienti</h2>
+<a asp-action="Create" class="btn btn-primary">Aggiungi Cliente</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cliente in Model)
+        {
+            <tr>
+                <td>@cliente.NomeCompleto</td>
+                <td>@cliente.Email</td>
+                <td>@cliente.Telefono</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@cliente.ClienteId" class="btn btn-warning">Modifica</a>
+                    <a asp-action="Delete" asp-route-id="@cliente.ClienteId" class="btn btn-danger">Elimina</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
