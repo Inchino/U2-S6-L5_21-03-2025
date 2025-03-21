@@ -1,7 +1,10 @@
-﻿using GestionaleHotel.Models;
-using GestionaleHotel.ViewModels;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using GestionaleHotel.Models;
+using GestionaleHotel.ViewModels;
 
 namespace GestionaleHotel.Controllers
 {
@@ -40,31 +43,45 @@ namespace GestionaleHotel.Controllers
 
             if (result.Succeeded)
             {
-                Console.WriteLine("Login riuscito: " + user.Email);
+                var roles = await _userManager.GetRolesAsync(user);
 
-                //await _signInManager.SignOutAsync();
-                //await _signInManager.SignInAsync(user, isPersistent: false);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("FirstName", user.FirstName),
+                    new Claim("LastName", user.LastName)
+                };
 
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
 
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                Console.WriteLine("Login fallito");
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction("ForceRefresh", "Account");
             }
 
             ModelState.AddModelError("", "Email o password non validi.");
             return View(model);
         }
 
-
+        [HttpGet]
+        public IActionResult ForceRefresh()
+        {
+            return RedirectToAction("Index", "Home");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
 

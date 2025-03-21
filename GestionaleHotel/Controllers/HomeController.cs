@@ -25,13 +25,33 @@ namespace GestionaleHotel.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                Console.WriteLine("Nessun utente trovato!");
+            }
+            else
+            {
+                Console.WriteLine($"Utente autenticato: {user.UserName}");
+            }
+
             var roles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
+
+            if (roles.Count == 0)
+            {
+                Console.WriteLine("Nessun ruolo assegnato all'utente!");
+            }
+            else
+            {
+                Console.WriteLine($"Ruoli assegnati: {string.Join(", ", roles)}");
+            }
 
             ViewBag.UserName = user?.UserName;
             ViewBag.Roles = roles;
 
             return View();
         }
+
 
         public IActionResult Privacy()
         {

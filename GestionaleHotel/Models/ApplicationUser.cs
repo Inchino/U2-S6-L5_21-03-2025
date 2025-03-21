@@ -16,6 +16,5 @@ namespace GestionaleHotel.Models
 
         public ICollection<ApplicationUserRole> ApplicationUserRole { get; set; }
 
-        //public ICollection<Product> Products { get; set; }
     }
 }
