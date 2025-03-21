@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using GestionaleHotel.Models;
+using GestionaleHotel.ViewModels;
 
 namespace GestionaleHotel.Controllers;
 
