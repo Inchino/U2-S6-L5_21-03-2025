@@ -6,3 +6,20 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <h3>Utente autenticato: @ViewBag.UserName</h3>
+    <h4>Ruoli:</h4>
+    <ul>
+        @foreach (var ruolo in ViewBag.Roles)
+        {
+            <li>@ruolo</li>
+        }
+    </ul>
+}
+else
+{
+    <h3>Utente non autenticato</h3>
+}
+

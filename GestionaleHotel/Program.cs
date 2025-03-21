@@ -43,6 +43,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 
     .AddDefaultTokenProviders();
 
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, ApplicationRole>>();
+
 // Ruoli
 async Task SeedRolesAsync(IServiceProvider serviceProvider)
 {
@@ -98,10 +100,10 @@ builder.Services.AddAuthentication(
     })
     .AddCookie(options => {
         options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
         options.Cookie.HttpOnly = true;
         
-        options.Cookie.Name = "EcommerceLiveEfCore";
+        options.Cookie.Name = "GestionaleHotel";
     });
 
 // Servicies

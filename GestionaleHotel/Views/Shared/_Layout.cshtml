@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,16 +34,15 @@
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (User.Identity.IsAuthenticated)
                         {
-                            if (User.IsInRole("Viewer") || User.IsInRole("Editor") || User.IsInRole("Admin"))
+                            @if (roles.Contains("Viewer") || roles.Contains("Editor") || roles.Contains("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Prenotazioni" asp-action="Index">Prenotazioni</a>
                                 </li>
                             }
-
-                            if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+                            @if (roles.Contains("Editor") || roles.Contains("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Clienti" asp-action="Index">Clienti</a>
@@ -43,13 +51,13 @@
                                     <a class="nav-link" asp-controller="Camere" asp-action="Index">Camere</a>
                                 </li>
                             }
-
-                            if (User.IsInRole("Admin"))
+                            @if (roles.Contains("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="GestioneDipendenti" asp-action="Index">Gestione Dipendenti</a>
                                 </li>
                             }
+
                         }
                     </ul>
 
