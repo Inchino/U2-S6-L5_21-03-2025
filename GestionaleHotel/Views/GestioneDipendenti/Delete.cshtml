@@ -1,0 +1,14 @@
+﻿@model GestionaleHotel.Models.ApplicationUser
+
+<h2>Elimina Dipendente</h2>
+<p>
+    Sei sicuro di voler eliminare in modo permanente il dipendente
+    <strong>@Model.FirstName @Model.LastName</strong>
+    con email <strong>@Model.Email</strong>?
+</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Elimina definitivamente</button>
+    <a asp-action="Index" class="btn btn-secondary">Annulla</a>
+</form>

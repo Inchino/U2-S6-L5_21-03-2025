@@ -1,0 +1,28 @@
+﻿@{
+    var utente = ViewBag.Utente as GestionaleHotel.Models.ApplicationUser;
+    var ruoloCorrente = ViewBag.RuoloCorrente as string;
+    var ruoli = ViewBag.Ruoli as List<string>;
+}
+
+<h2>Modifica ruolo per @utente.FirstName @utente.LastName</h2>
+
+<form asp-action="ModificaRuolo" method="post">
+    <input type="hidden" name="id" value="@utente.Id" />
+
+    <div class="form-group">
+        <label>Ruolo attuale: <strong>@ruoloCorrente</strong></label>
+    </div>
+
+    <div class="form-group">
+        <label>Nuovo ruolo</label>
+        <select name="nuovoRuolo" class="form-control" required>
+            @foreach (var ruolo in ruoli)
+            {
+                <option value="@ruolo">@ruolo</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Aggiorna Ruolo</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Annulla</a>
+</form>

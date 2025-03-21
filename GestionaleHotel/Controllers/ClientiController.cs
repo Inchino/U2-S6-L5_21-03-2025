@@ -1,10 +1,12 @@
 ﻿using GestionaleHotel.Services;
 using GestionaleHotel.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GestionaleHotel.Controllers
 {
+    [Authorize(Roles = "Admin,Editor")]
     public class ClientiController : Controller
     {
         private readonly IClienteService _clienteService;

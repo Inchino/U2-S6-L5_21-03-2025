@@ -1,8 +1,6 @@
 using GestionaleHotel.Data;
 using GestionaleHotel.Models;
 using GestionaleHotel.Services;
-
-//using GestionaleHotel.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +43,53 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 
     .AddDefaultTokenProviders();
 
+// Ruoli
+async Task SeedRolesAsync(IServiceProvider serviceProvider)
+{
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+    string[] roleNames = { "Admin", "Editor", "Viewer" };
+
+    foreach (var roleName in roleNames)
+    {
+        var roleExist = await roleManager.RoleExistsAsync(roleName);
+        if (!roleExist)
+        {
+            await roleManager.CreateAsync(new ApplicationRole { Name = roleName });
+        }
+    }
+}
+async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
+{
+    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+    string adminEmail = "admin@hotel.com";
+    string adminPassword = "Admin123!";
+
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true,
+            FirstName = "Admin",
+            LastName = "Hotel",
+            BirthDate = new DateOnly(1980, 1, 1)
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
+
+
 // Cookies
 builder.Services.AddAuthentication(
     options => {
@@ -85,5 +130,12 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedRolesAsync(services);
+    await SeedAdminUserAsync(services);
+}
 
 app.Run();

@@ -1,10 +1,12 @@
 ﻿using GestionaleHotel.Services;
 using GestionaleHotel.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GestionaleHotel.Controllers
 {
+    [Authorize]
     public class PrenotazioniController : Controller
     {
         private readonly IPrenotazioneService _prenotazioneService;
@@ -18,12 +20,14 @@ namespace GestionaleHotel.Controllers
             _cameraService = cameraService;
         }
 
+        [Authorize(Roles = "Admin,Editor,Viewer")]
         public async Task<IActionResult> Index()
         {
             var prenotazioni = await _prenotazioneService.GetAllPrenotazioniAsync();
             return View(prenotazioni);
         }
 
+        [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Create()
         {
             var clienti = await _clienteService.GetAllClientiAsync();
@@ -40,6 +44,7 @@ namespace GestionaleHotel.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Create(PrenotazioneCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -49,6 +54,7 @@ namespace GestionaleHotel.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Edit(int id)
         {
             var prenotazione = await _prenotazioneService.GetPrenotazioneByIdAsync(id);
@@ -69,6 +75,7 @@ namespace GestionaleHotel.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Edit(PrenotazioneEditViewModel model)
         {
             if (!ModelState.IsValid)
@@ -78,6 +85,7 @@ namespace GestionaleHotel.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Delete(int id)
         {
             var prenotazione = await _prenotazioneService.GetPrenotazioneByIdAsync(id);
@@ -88,6 +96,7 @@ namespace GestionaleHotel.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _prenotazioneService.DeletePrenotazioneAsync(id);

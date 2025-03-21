@@ -1,0 +1,27 @@
+﻿@model IEnumerable<GestionaleHotel.Models.ApplicationUser>
+
+<h2>Gestione Dipendenti</h2>
+
+<a asp-action="Create" class="btn btn-primary">Aggiungi Nuovo Dipendente</a>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Data di nascita</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var utente in Model)
+        {
+            <tr>
+                <td>@utente.Email</td>
+                <td>@utente.FirstName</td>
+                <td>@utente.LastName</td>
+                <td>@utente.BirthDate?.ToString("dd/MM/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
