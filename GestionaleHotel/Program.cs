@@ -1,5 +1,7 @@
 using GestionaleHotel.Data;
 using GestionaleHotel.Models;
+using GestionaleHotel.Services;
+
 //using GestionaleHotel.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -58,6 +60,9 @@ builder.Services.AddAuthentication(
     });
 
 // Servicies
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<ICameraService, CameraService>();
+builder.Services.AddScoped<IPrenotazioneService, PrenotazioneService>();
 
 var app = builder.Build();
 
