@@ -1,11 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    var user = await UserManager.GetUserAsync(User);
-    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+    var userName = ViewBag.UserName as string;
+    var roles = ViewBag.Roles as List<string> ?? new List<string>();
 }
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,12 +29,11 @@
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (SignInManager.IsSignedIn(User))
                         {
                             @if (roles.Contains("Viewer") || roles.Contains("Editor") || roles.Contains("Admin"))
                             {
@@ -57,16 +56,15 @@
                                     <a class="nav-link" asp-controller="GestioneDipendenti" asp-action="Index">Gestione Dipendenti</a>
                                 </li>
                             }
-
                         }
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
                                 <span class="navbar-text text-light me-2">
-                                    Ciao, @User.Identity.Name
+                                    Ciao, @userName
                                 </span>
                             </li>
                             <li class="nav-item">

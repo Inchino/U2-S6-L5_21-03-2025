@@ -24,9 +24,6 @@ namespace GestionaleHotel.Controllers
 
         public async Task<IActionResult> Index()
         {
-            Console.WriteLine("Stato autenticazione: " + User.Identity.IsAuthenticated);
-            Console.WriteLine("Utente attuale: " + User.Identity.Name);
-
             var user = await _userManager.GetUserAsync(User);
             var roles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
 

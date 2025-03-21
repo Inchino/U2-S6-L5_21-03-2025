@@ -42,7 +42,9 @@ namespace GestionaleHotel.Controllers
             {
                 Console.WriteLine("Login riuscito: " + user.Email);
 
-                await _signInManager.SignOutAsync();
+                //await _signInManager.SignOutAsync();
+                //await _signInManager.SignInAsync(user, isPersistent: false);
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 return RedirectToAction("Index", "Home");
