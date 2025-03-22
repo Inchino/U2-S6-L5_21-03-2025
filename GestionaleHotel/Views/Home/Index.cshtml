@@ -9,11 +9,11 @@
 @if (User.Identity?.IsAuthenticated == true)
 {
     <h3>Utente autenticato: @User.Identity.Name</h3>
-    <h4>Ruolo:</h4>
+    <h4>Ruoli:</h4>
     <ul>
-        @foreach (var ruolo in ViewBag.Roles as List<string>)
+        @foreach (var claim in User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role))
         {
-            <li>@ruolo</li>
+            <li>@claim.Value</li>
         }
     </ul>
 }
@@ -21,4 +21,3 @@ else
 {
     <h3>Utente non autenticato</h3>
 }
-

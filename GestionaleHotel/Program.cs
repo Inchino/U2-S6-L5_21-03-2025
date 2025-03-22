@@ -115,6 +115,7 @@ async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
     var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
+    string UserName = "Admin";
     string adminEmail = "admin@hotel.com";
     string adminPassword = "Admin123!";
 
@@ -124,7 +125,7 @@ async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
     {
         adminUser = new ApplicationUser
         {
-            UserName = adminEmail,
+            UserName = UserName,
             Email = adminEmail,
             EmailConfirmed = true,
             FirstName = "Admin",

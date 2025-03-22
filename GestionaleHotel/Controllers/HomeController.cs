@@ -1,57 +1,22 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using GestionaleHotel.ViewModels;
-using GestionaleHotel.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace GestionaleHotel.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-            {
-                Console.WriteLine("Nessun utente trovato!");
-            }
-            else
-            {
-                Console.WriteLine($"Utente autenticato: {user.UserName}");
-            }
-
-            var roles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
-
-            if (roles.Count == 0)
-            {
-                Console.WriteLine("Nessun ruolo assegnato all'utente!");
-            }
-            else
-            {
-                Console.WriteLine($"Ruoli assegnati: {string.Join(", ", roles)}");
-            }
-
-            ViewBag.UserName = user?.UserName;
-            ViewBag.Roles = roles;
-
             return View();
         }
-
 
         public IActionResult Privacy()
         {
