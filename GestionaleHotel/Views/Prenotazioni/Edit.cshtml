@@ -7,16 +7,14 @@
 
     <div class="form-group">
         <label asp-for="ClienteId">Cliente</label>
-        <select asp-for="ClienteId" asp-items="Model.Clienti" class="form-control" required>
-            <option value="">-- Seleziona un Cliente --</option>
-        </select>
+        <select asp-for="ClienteId" asp-items="Model.Clienti" class="form-control"></select>
     </div>
+
     <div class="form-group">
         <label asp-for="CameraId">Camera</label>
-        <select asp-for="CameraId" asp-items="Model.CamereDisponibili" class="form-control" required>
-            <option value="">-- Seleziona una Camera --</option>
-        </select>
+        <select asp-for="CameraId" asp-items="Model.CamereDisponibili" class="form-control"></select>
     </div>
+
     <div class="form-group">
         <label asp-for="DataInizio"></label>
         <input asp-for="DataInizio" type="date" class="form-control" required />

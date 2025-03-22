@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 
 namespace GestionaleHotel.ViewModels
 {
@@ -23,7 +26,12 @@ namespace GestionaleHotel.ViewModels
         [StringLength(20)]
         public string Stato { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public SelectList Clienti { get; set; }
+
+        [BindNever]
+        [ValidateNever]
         public SelectList CamereDisponibili { get; set; }
     }
 }

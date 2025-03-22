@@ -2,6 +2,7 @@
 using GestionaleHotel.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 
 namespace GestionaleHotel.Controllers
@@ -48,17 +49,52 @@ namespace GestionaleHotel.Controllers
         public async Task<IActionResult> Create(PrenotazioneCreateViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                foreach (var key in ModelState.Keys)
+                {
+                    var errors = ModelState[key].Errors;
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($"Errore su '{key}': {error.ErrorMessage}");
+                    }
+                }
 
-            await _prenotazioneService.AddPrenotazioneAsync(model);
+                // Ricarica i SelectList
+                var clienti = await _clienteService.GetAllClientiAsync();
+                var camere = await _cameraService.GetCamereDisponibiliAsync();
+                model.Clienti = new SelectList(clienti, "ClienteId", "NomeCompleto");
+                model.CamereDisponibili = new SelectList(camere, "CameraId", "Numero");
+
+                return View(model);
+            }
+
+            var success = await _prenotazioneService.AddPrenotazioneAsync(model);
+
+            if (!success)
+            {
+                ModelState.AddModelError("", "Errore: la prenotazione non è stata salvata. Verifica che la camera sia disponibile.");
+
+                // Ricarica i SelectList
+                var clienti = await _clienteService.GetAllClientiAsync();
+                var camere = await _cameraService.GetCamereDisponibiliAsync();
+                model.Clienti = new SelectList(clienti, "ClienteId", "NomeCompleto");
+                model.CamereDisponibili = new SelectList(camere, "CameraId", "Numero");
+
+                return View(model);
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
 
         [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Edit(int id)
         {
             var prenotazione = await _prenotazioneService.GetPrenotazioneByIdAsync(id);
             if (prenotazione == null) return NotFound();
+
+            var clienti = await _clienteService.GetAllClientiAsync();
+            var camere = await _cameraService.GetCamereDisponibiliAsync();
 
             var model = new PrenotazioneEditViewModel
             {
@@ -67,11 +103,14 @@ namespace GestionaleHotel.Controllers
                 CameraId = prenotazione.CameraId,
                 DataInizio = prenotazione.DataInizio,
                 DataFine = prenotazione.DataFine,
-                Stato = prenotazione.Stato
+                Stato = prenotazione.Stato,
+                Clienti = new SelectList(clienti, "ClienteId", "NomeCompleto", prenotazione.ClienteId),
+                CamereDisponibili = new SelectList(camere, "CameraId", "Numero", prenotazione.CameraId)
             };
 
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -79,11 +118,34 @@ namespace GestionaleHotel.Controllers
         public async Task<IActionResult> Edit(PrenotazioneEditViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                var clienti = await _clienteService.GetAllClientiAsync();
+                var camere = await _cameraService.GetCamereDisponibiliAsync();
 
-            await _prenotazioneService.UpdatePrenotazioneAsync(model);
+                model.Clienti = new SelectList(clienti, "ClienteId", "NomeCompleto", model.ClienteId);
+                model.CamereDisponibili = new SelectList(camere, "CameraId", "Numero", model.CameraId);
+
+                return View(model);
+            }
+
+            var success = await _prenotazioneService.UpdatePrenotazioneAsync(model);
+
+            if (!success)
+            {
+                ModelState.AddModelError("", "Errore durante l'aggiornamento della prenotazione.");
+
+                var clienti = await _clienteService.GetAllClientiAsync();
+                var camere = await _cameraService.GetCamereDisponibiliAsync();
+
+                model.Clienti = new SelectList(clienti, "ClienteId", "NomeCompleto", model.ClienteId);
+                model.CamereDisponibili = new SelectList(camere, "CameraId", "Numero", model.CameraId);
+
+                return View(model);
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
 
         [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> Delete(int id)
@@ -94,13 +156,23 @@ namespace GestionaleHotel.Controllers
             return View(prenotazione);
         }
 
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Editor")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _prenotazioneService.DeletePrenotazioneAsync(id);
+            var success = await _prenotazioneService.DeletePrenotazioneAsync(id);
+
+            if (!success)
+            {
+                ModelState.AddModelError("", "Errore durante l'eliminazione della prenotazione.");
+                var prenotazione = await _prenotazioneService.GetPrenotazioneByIdAsync(id);
+                return View("Delete", prenotazione);
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
     }
 }
