@@ -25,14 +25,25 @@ namespace GestionaleHotel.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.Ruoli = _roleManager.Roles.Select(r => r.Name).ToList();
+            ViewBag.Ruoli = _roleManager.Roles
+                .Where(r => r.Name != "Admin")
+                .Select(r => r.Name)
+                .ToList();
+
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string email, string password, string nome, string cognome, DateOnly birthDate, string ruolo)
         {
+            if (ruolo == "Admin")
+            {
+                TempData["ErroreRuolo"] = "Non è possibile creare un utente con ruolo Admin.";
+                return RedirectToAction("Index");
+            }
+
             var user = new ApplicationUser
             {
                 UserName = email,
@@ -53,18 +64,31 @@ namespace GestionaleHotel.Controllers
             foreach (var error in result.Errors)
                 ModelState.AddModelError("", error.Description);
 
-            ViewBag.Ruoli = _roleManager.Roles.Select(r => r.Name).ToList();
+            ViewBag.Ruoli = _roleManager.Roles
+                .Where(r => r.Name != "Admin")
+                .Select(r => r.Name)
+                .ToList();
+
             return View();
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> ModificaRuolo(string id)
+        public async Task<IActionResult> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
-            var ruoliDisponibili = _roleManager.Roles.Select(r => r.Name).ToList();
-            var ruoloUtente = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            var ruoliUtente = await _userManager.GetRolesAsync(user);
+            if (ruoliUtente.Contains("Admin"))
+                return Forbid();
+
+            var ruoliDisponibili = _roleManager.Roles
+                .Where(r => r.Name != "Admin")
+                .Select(r => r.Name)
+                .ToList();
+
+            var ruoloUtente = ruoliUtente.FirstOrDefault();
 
             ViewBag.Ruoli = ruoliDisponibili;
             ViewBag.Utente = user;
@@ -73,14 +97,25 @@ namespace GestionaleHotel.Controllers
             return View();
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ModificaRuolo(string id, string nuovoRuolo)
+        public async Task<IActionResult> Edit(string id, string nuovoRuolo)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
             var ruoliUtente = await _userManager.GetRolesAsync(user);
+
+            if (ruoliUtente.Contains("Admin"))
+                return Forbid();
+
+            if (nuovoRuolo == "Admin")
+            {
+                TempData["ErroreRuolo"] = "Non è possibile assegnare il ruolo Admin.";
+                return RedirectToAction("Index");
+            }
+
             if (ruoliUtente.Any())
                 await _userManager.RemoveFromRolesAsync(user, ruoliUtente);
 
@@ -89,11 +124,17 @@ namespace GestionaleHotel.Controllers
             return RedirectToAction("Index");
         }
 
+
+
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
+
+            var ruoliUtente = await _userManager.GetRolesAsync(user);
+            if (ruoliUtente.Contains("Admin"))
+                return Forbid();
 
             return View(user);
         }
@@ -105,9 +146,14 @@ namespace GestionaleHotel.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
+            var ruoliUtente = await _userManager.GetRolesAsync(user);
+            if (ruoliUtente.Contains("Admin"))
+                return Forbid();
+
             await _userManager.DeleteAsync(user);
             return RedirectToAction("Index");
         }
+
 
     }
 
